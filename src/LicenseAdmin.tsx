@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Activity, Check, Clipboard, KeyRound, LoaderCircle, LogOut, Plus, RefreshCw, ShieldCheck, X } from 'lucide-react'
 import { apiRequest, type User } from './api'
+import captionsIcon from './assets/captions-icon.png'
 import './licenses.css'
 
 type License = {
@@ -123,7 +124,7 @@ export default function LicenseAdmin({ user, onLogout }: { user: User; onLogout:
   return (
     <main className="license-admin-page">
       <header className="license-topbar">
-        <a href="/" className="brand" aria-label="Captions — início"><span className="brand-symbol"><i /><i /><i /></span><span>captions</span><sup>®</sup></a>
+        <a href="/" className="brand" aria-label="Captions — início"><img className="brand-logo" src={captionsIcon} alt="" /><span>Captions</span></a>
         <div className="license-top-actions"><span className="license-admin-badge"><ShieldCheck size={15} /> Administração</span><span className="license-admin-email">{user.email}</span><button className="license-logout" type="button" onClick={onLogout} aria-label="Sair da conta"><LogOut size={16} /><span>Sair</span></button></div>
       </header>
 
