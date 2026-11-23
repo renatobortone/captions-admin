@@ -1,7 +1,6 @@
 export type User = {
   id: string
   email: string
-  emailConfirmed: boolean
   role: string
 }
 
@@ -9,7 +8,8 @@ type ApiResponse<T> = T & { message?: string }
 
 const configuredBase = import.meta.env.VITE_CAPTIONS_API_URL?.trim()
 const productionBase = 'https://captions-licensing-api.renato-3b0.workers.dev'
-const API_BASE = (configuredBase || (import.meta.env.PROD ? productionBase : '')).replace(/\/+$/, '')
+// Never allow a local .env.local override to leak into production builds.
+const API_BASE = (import.meta.env.PROD ? productionBase : configuredBase || '').replace(/\/+$/, '')
 
 export class ApiError extends Error {
   status: number

@@ -1,5 +1,11 @@
 node_modules/
 dist/
+build/
+*.dmg
+*.pkg
+*.zip
+*.xcarchive/
+*.app/
 *.tsbuildinfo
 .env
 .env.*

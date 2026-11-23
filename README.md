@@ -76,7 +76,7 @@ Ver contrato de dados e endpoints em `../captions-api/BILLING_FLOW.md`.
 
 ## Aplicação web (fundação de autenticação)
 
-Este repositório inclui uma interface React/Vite responsiva para entrar, criar conta, confirmar e-mail e recuperar senha. Para usuários com role `admin` fornecida pelo backend, o painel permite criar e listar licenças legadas e listar/revogar ativações existentes usando `/v1/portal/licenses` e `/v1/portal/activations`. A chave de cada licença aparece apenas na resposta de criação e é exibida uma única vez no painel. Essas rotas não gerenciam cobranças, assinaturas nem assentos pagos: essas capacidades continuam sendo especificação e dependem de endpoints e modelo de dados ainda não implementados na API.
+Este repositório inclui uma interface React/Vite responsiva para entrar, criar conta, confirmar e-mail e recuperar senha. Usuários comuns acessam o portal da conta, que mostra ativações e permite iniciar checkout Stripe hospedado, consultar assinatura e abrir Billing Portal. A confirmação de pagamento e a concessão de assentos são determinadas exclusivamente pelo webhook verificado na API; parâmetros de retorno no browser não ativam licenças. Usuários com role `admin` fornecida pelo backend continuam no painel global de licenças, que permite criar/listar licenças legadas e listar/revogar ativações via `/v1/portal/licenses` e `/v1/portal/activations`. A chave legada é exibida uma única vez.
 
 ### Requisitos
 

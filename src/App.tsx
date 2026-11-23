@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useState, type FormEvent } from 'react'
-import { ArrowDownRight, ArrowRight, Check, CircleHelp, Eye, EyeOff, Headphones, LoaderCircle, LockKeyhole, Mail, MonitorPlay, ShieldCheck, Sparkles, X } from 'lucide-react'
+import { ArrowRight, Check, Eye, EyeOff, Headphones, LoaderCircle, LockKeyhole, Mail, ShieldCheck, Sparkles, X } from 'lucide-react'
 import { apiRequest, authBody, type User } from './api'
 import LicenseAdmin from './LicenseAdmin'
+import UserPortal from './UserPortal'
 import captionsIcon from './assets/captions-icon.png'
 
 type Mode = 'login' | 'register' | 'forgot'
@@ -17,9 +18,6 @@ function getErrorMessage(error: unknown) {
   }
   if (/already registered|already exists|user exists/i.test(message)) {
     return 'Este e-mail já possui uma conta. Entre ou use outro e-mail.'
-  }
-  if (/email not confirmed|email_not_confirmed/i.test(message)) {
-    return 'Confirme seu e-mail antes de entrar. Confira sua caixa de entrada.'
   }
   return message
 }
@@ -92,7 +90,7 @@ function App() {
             })
             if (!cancelled) {
               if (!isRecovery) setUser(result.user)
-              setNotice({ kind: 'success', text: isRecovery ? 'Sessão de recuperação validada. Escolha sua nova senha.' : 'E-mail confirmado. Sua conta já está pronta.' })
+              setNotice({ kind: 'success', text: isRecovery ? 'Sessão de recuperação validada. Escolha sua nova senha.' : 'Acesso concluído.' })
               setRecoveryMode(isRecovery)
             }
           } catch (error) {
@@ -164,11 +162,11 @@ function App() {
         window.history.replaceState(null, '', AUTH_CALLBACK_PATH)
         setNotice({ kind: 'success', text: 'Senha atualizada. Entre com sua nova senha.' })
       } else if (mode === 'register') {
-        const result = await apiRequest('/v1/auth/register', {
+        await apiRequest('/v1/auth/register', {
           method: 'POST',
           body: JSON.stringify(authBody(email, password)),
         })
-        setNotice({ kind: 'success', text: result.message || 'Conta criada. Confira sua caixa de entrada para confirmar seu e-mail.' })
+        setNotice({ kind: 'success', text: 'Cadastro concluído com sucesso! Você já pode entrar na sua conta.' })
         setMode('login')
         setPassword('')
       } else if (mode === 'forgot') {
@@ -228,38 +226,7 @@ function App() {
     if (user.role === 'admin') {
       return <LicenseAdmin user={user} onLogout={() => void handleLogout()} />
     }
-    return (
-      <main className="signed-in-page">
-        <header className="topbar"><Brand /><span className="topbar-note"><ShieldCheck size={15} /> Área segura</span></header>
-        <section className="welcome-card">
-          <div className="welcome-glow" aria-hidden="true" />
-          <div className="welcome-content">
-            <div className="success-icon"><Check size={23} strokeWidth={2.5} /></div>
-            {notice?.kind === 'success' && <div className="inline-success"><Check size={15} /> {notice.text}</div>}
-            <p className="eyebrow">SEU ESPAÇO CAPTIONS</p>
-            <h1>Bom ter você<br />por aqui.</h1>
-            <p className="welcome-copy">Sua conta Captions está conectada. Gerencie suas licenças e acompanhe os dispositivos em que o app está ativado.</p>
-            <div className="account-row">
-              <div className="avatar">{user.email.charAt(0).toUpperCase()}</div>
-              <div className="account-details"><span className="account-label">CONTA CAPTIONS</span><strong>{user.email}</strong></div>
-              <span className={`verified-pill ${user.emailConfirmed ? 'is-verified' : ''}`}><span className="status-dot" />{user.emailConfirmed ? 'Verificado' : 'Pendente'}</span>
-            </div>
-            <div className="foundation-note"><Sparkles size={16} /><span>Acompanhe a comunicação do evento em canais separados, da passagem de som ao último acorde.</span></div>
-            <button className="button button-subtle logout-button" onClick={() => void handleLogout()} disabled={loading}>
-              {loading ? <LoaderCircle size={17} className="spinner" /> : null} Sair da conta <ArrowRight size={16} />
-            </button>
-            {notice?.kind === 'error' && <div className="notice error-notice" role="alert"><X size={16} />{notice.text}</div>}
-          </div>
-          <div className="welcome-visual" aria-hidden="true">
-            <div className="orbit orbit-one" /><div className="orbit orbit-two" />
-            <div className="glass-tile"><div className="tile-top"><span className="tile-dot" /><span className="tile-dot" /><span className="tile-dot" /><span className="tile-caption">CAPTIONS STUDIO</span></div><div className="waveform"><i /><i /><i /><i /><i /><i /><i /><i /><i /><i /><i /><i /><i /><i /><i /><i /><i /></div><div className="caption-line"><span className="caption-marker" /><span>Comunicação do evento.</span></div><div className="tile-footer"><span>00:18</span><span className="play-mark"><ArrowDownRight size={14} /></span></div></div>
-            <div className="float-chip"><span className="chip-icon"><MonitorPlay size={16} /></span><span><b>Captions</b><small>comunicação ao vivo</small></span><Check size={14} className="chip-check" /></div>
-            <div className="visual-orb orb-a" /><div className="visual-orb orb-b" />
-          </div>
-        </section>
-        <footer className="page-footer"><span>© 2026 Captions</span><a href="mailto:suporte@captions.app"><CircleHelp size={15} /> Precisa de ajuda?</a></footer>
-      </main>
-    )
+    return <UserPortal user={user} onLogout={() => void handleLogout()} />
   }
 
   return (
